@@ -1,5 +1,3 @@
-import string
-
 import meta_class
 from utils import wrap, print_class_must_have_func, generate_commands_add_func, print_class_must_have_decors, \
     print_class_must_have_base, generate_commands_add_base
@@ -40,7 +38,7 @@ def create_template(n_steps=2):
     return template
 
 
-def create_concrete_class(base_name, name,n_steps=2):
+def create_concrete_class(base_name, name, n_steps=2):
     print('You are creating a concrete class for Template method pattern.')
 
     concrete = meta_class.MetaClass()
@@ -72,7 +70,7 @@ def template_method_generator():
     template = create_template(n_steps)
     concrete_classes = []
     for i in range(2):
-        concrete_class = create_concrete_class(template.name, f'ConcreteClass{i}',n_steps)
+        concrete_class = create_concrete_class(template.name, f'ConcreteClass{i}', n_steps)
         concrete_classes.append(concrete_class)
 
     commands = ['template_method_pattern_auto', 'template_method']

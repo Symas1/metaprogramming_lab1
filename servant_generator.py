@@ -1,6 +1,5 @@
 import meta_class
-from utils import wrap, print_class_must_have_func, generate_commands_add_func, print_class_must_have_decors, \
-    print_class_must_have_base, generate_commands_add_base
+from utils import wrap, print_class_must_have_base, generate_commands_add_base
 
 
 def create_servant():
@@ -27,5 +26,6 @@ def servant_generator():
     servant = create_servant()
 
     servant.write_class()
+
 
 servant_generator()

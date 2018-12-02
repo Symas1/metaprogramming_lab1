@@ -32,6 +32,7 @@ def create_base_element():
 
     return base_element
 
+
 def create_concrete_element(base_element_name):
     print('You are creating a concrete element class for Visitor pattern.')
 
@@ -60,6 +61,7 @@ def create_concrete_element(base_element_name):
     concrete_element._add_methods()
 
     return concrete_element
+
 
 def create_base_visitor():
     print('You are creating a base visitor class for Visitor pattern.')
@@ -91,6 +93,7 @@ def create_base_visitor():
     base_visitor._add_methods()
 
     return base_visitor, n_visit_func
+
 
 def create_concrete_visitor(base_visitor_name, n_visit_func):
     print('You are creating a concrete visitor class for Visitor pattern.')
@@ -133,14 +136,15 @@ def visitor_generator():
     base_visitor, n_funcs = create_base_visitor()
     concrete_visitors = []
     for i in range(int(input('How many concrete visitors do you want: '))):
-        concrete_visitor = create_concrete_visitor(base_visitor.name,n_funcs)
+        concrete_visitor = create_concrete_visitor(base_visitor.name, n_funcs)
         concrete_visitors.append(concrete_visitor)
 
     folder, file = base_element.write_class()
     for concrete_element in concrete_elements:
         concrete_element.write_class(folder, file)
-    base_visitor.write_class(folder,file)
+    base_visitor.write_class(folder, file)
     for concrete_visitor in concrete_visitors:
-        concrete_visitor.write_class(folder,file)
+        concrete_visitor.write_class(folder, file)
+
 
 visitor_generator()
