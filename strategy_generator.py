@@ -1,4 +1,5 @@
 import meta_class
+import os
 from utils import wrap, print_class_must_have_func, generate_commands_add_func, print_class_must_have_decors, \
     print_class_must_have_base, generate_commands_add_base
 
@@ -50,7 +51,7 @@ def create_base_strategy():
     strategy._add_class_name()
     class_name = strategy.name
 
-    base_names = ['ABCMeta']
+    base_names = ['ABC']
     commands = generate_commands_add_base(base_names)
     wrap(strategy._add_base_names, commands)
     print_class_must_have_base(class_name, base_names, True)
@@ -100,7 +101,7 @@ def create_concrete_strategy(base_state_name):
     return strategy
 
 
-def state_generator():
+def strategy_generator():
     context = create_context()
     base_strategy = create_base_strategy()
     concrete_strategies = []
@@ -112,6 +113,15 @@ def state_generator():
     base_strategy.write_class(folder, file)
     for concrete_strategy in concrete_strategies:
         concrete_strategy.write_class(folder, file)
+    path = os.path.join(os.getcwd(), folder)
+    with open(os.path.join(path, file + '.py'), 'r') as f:
+        lines = f.readlines()
+        lines.insert(0, 'from abc import ABC, abstractmethod\n')
+    with open(os.path.join(path, file + '.py'), 'w') as f:
+        f.writelines(lines)
+
+    return folder, file, context.name
 
 
-state_generator()
+if __name__ == '__main__':
+    strategy_generator()

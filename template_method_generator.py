@@ -1,4 +1,5 @@
 import meta_class
+import os
 from utils import wrap, print_class_must_have_func, generate_commands_add_func, print_class_must_have_decors, \
     print_class_must_have_base, generate_commands_add_base
 
@@ -11,7 +12,7 @@ def create_template():
     template._add_class_name()
     class_name = template.name
 
-    base_classes = ['ABCMeta']
+    base_classes = ['ABC']
     commands = generate_commands_add_base(base_classes)
     wrap(template._add_base_names, commands)
     print_class_must_have_base(class_name, base_classes, True)
@@ -77,13 +78,23 @@ def create_concrete_class(base_name, n_steps):
 def template_method_generator():
     template, n_steps = create_template()
     concrete_classes = []
-    for i in range(int(input('How many concrete classes do you want: '))):
+
+    n_classes = int(input('How many concrete classes do you want: '))
+    for i in range(n_classes):
         concrete_class = create_concrete_class(template.name, n_steps)
         concrete_classes.append(concrete_class)
 
     folder, file = template.write_class()
     for concrete_class in concrete_classes:
         concrete_class.write_class(folder, file)
+    path = os.path.join(os.getcwd(), folder)
+    with open(os.path.join(path, file + '.py'), 'r') as f:
+        lines = f.readlines()
+        lines.insert(0, 'from abc import ABC, abstractmethod\n')
+    with open(os.path.join(path, file + '.py'), 'w') as f:
+        f.writelines(lines)
+    return folder, file, n_classes
 
 
-template_method_generator()
+if __name__ == '__main__':
+    template_method_generator()

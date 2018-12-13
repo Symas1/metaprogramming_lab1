@@ -1,4 +1,5 @@
 import meta_class
+import os
 from utils import wrap, print_class_must_have_func, generate_commands_add_func, print_class_must_have_decors, \
     print_class_must_have_base, generate_commands_add_base
 
@@ -12,7 +13,7 @@ def create_base_element():
 
     class_name = base_element.name
 
-    base_classes = ['ABCMeta']
+    base_classes = ['ABC']
     commands = generate_commands_add_base(base_classes)
     wrap(base_element._add_base_names, commands)
     print_class_must_have_base(class_name, base_classes, True)
@@ -72,7 +73,7 @@ def create_base_visitor():
 
     class_name = base_visitor.name
 
-    base_classes = ['ABCMeta']
+    base_classes = ['ABC']
     commands = generate_commands_add_base(base_classes)
     wrap(base_visitor._add_base_names, commands)
     print_class_must_have_base(class_name, base_classes, True)
@@ -145,6 +146,12 @@ def visitor_generator():
     base_visitor.write_class(folder, file)
     for concrete_visitor in concrete_visitors:
         concrete_visitor.write_class(folder, file)
+    path = os.path.join(os.getcwd(), folder)
+    with open(os.path.join(path, file + '.py'), 'r') as f:
+        lines = f.readlines()
+        lines.insert(0, 'from abc import ABC, abstractmethod\n')
+    with open(os.path.join(path, file + '.py'), 'w') as f:
+        f.writelines(lines)
 
 
 visitor_generator()

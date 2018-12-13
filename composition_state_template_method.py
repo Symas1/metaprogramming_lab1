@@ -1,3 +1,5 @@
+import state_generator
+import template_method_generator
 import meta_class
 import os
 from utils import wrap, print_class_must_have_func, generate_commands_add_func, print_class_must_have_decors, \
@@ -5,7 +7,7 @@ from utils import wrap, print_class_must_have_func, generate_commands_add_func, 
 
 
 def create_context():
-    print('You are creating a context class for State pattern.')
+    print('You are creating a context class for State in composition of State and Template Method.')
 
     context = meta_class.MetaClass()
 
@@ -45,7 +47,7 @@ def create_context():
 
 
 def create_base_state():
-    print('You are creating a base class for State in State pattern.')
+    print('You are creating a base class for State in composition of State and Template Method.')
 
     state = meta_class.MetaClass()
 
@@ -57,6 +59,16 @@ def create_base_state():
     wrap(state._add_base_names, commands)
     print_class_must_have_base(class_name, base_names, True)
     state._add_base_names()
+
+    curr_func = '__init__'
+    curr_params = ['template_method_instance']
+    curr_decors = []
+    commands = generate_commands_add_func(curr_func, curr_params, curr_decors)
+    wrap(state._add_method, commands)
+    print_class_must_have_func(class_name, curr_func, curr_params, True)
+    state._add_args_to_method(curr_func)
+    print_class_must_have_decors(class_name, curr_func, curr_decors, True)
+    state._add_method_decorator(curr_func)
 
     curr_func = 'handle'
     curr_params = []
@@ -74,7 +86,7 @@ def create_base_state():
 
 
 def create_concrete_state(base_state_name):
-    print('You are creating a concrete class for State in State pattern.')
+    print('You are creating a concrete class for State in composition of State and Template Method.')
 
     state = meta_class.MetaClass()
 
@@ -86,6 +98,16 @@ def create_concrete_state(base_state_name):
     wrap(state._add_base_names, commands)
     print_class_must_have_base(class_name, base_names, True)
     state._add_base_names()
+
+    curr_func = '__init__'
+    curr_params = ['template_method_instance']
+    curr_decors = []
+    commands = generate_commands_add_func(curr_func, curr_params, curr_decors)
+    wrap(state._add_method, commands)
+    print_class_must_have_func(class_name, curr_func, curr_params, True)
+    state._add_args_to_method(curr_func)
+    print_class_must_have_decors(class_name, curr_func, curr_decors, True)
+    state._add_method_decorator(curr_func)
 
     curr_func = 'handle'
     curr_params = []
@@ -102,28 +124,38 @@ def create_concrete_state(base_state_name):
     return state
 
 
-def state_generator():
+def add_super(path_to_file, class_name):
+    with open(path_to_file, 'r') as f:
+        lines = f.readlines()
+        selected_idx = [idx for idx, line in enumerate(lines) if f'class {class_name}' in line][0]
+        for i in range(selected_idx, len(lines)):
+            if 'def __init__' in lines[i]:
+                selected_idx = i
+                break
+        lines.insert(selected_idx + 1, '\t\tsuper().__init__(template_method_instance)\n')
+    with open(path_to_file, 'w') as f:
+        f.writelines(lines)
+
+
+def generate_comp_state_template_method():
+    folder, file, n_classes = template_method_generator.template_method_generator()
+
     context = create_context()
     base_state = create_base_state()
 
     concrete_states = []
-    for i in range(int(input('Enter number of concrete State classes: '))):
+    for i in range(n_classes):
         concrete_state = create_concrete_state(base_state.name)
         concrete_states.append(concrete_state)
 
-    folder, file = context.write_class()
+    context.write_class(folder, file)
     base_state.write_class(folder, file)
     for concrete_state in concrete_states:
         concrete_state.write_class(folder, file)
 
-    path = os.path.join(os.getcwd(), folder)
-    with open(os.path.join(path, file + '.py'), 'r') as f:
-        lines = f.readlines()
-        lines.insert(0, 'from abc import ABC, abstractmethod\n')
-    with open(os.path.join(path, file + '.py'), 'w') as f:
-        f.writelines(lines)
-    return folder, file
+    for concrete_state in concrete_states:
+        curr_name = concrete_state.name
+        add_super(os.path.join(folder, f'{file}.py'), curr_name)
 
 
-if __name__ == '__main__':
-    state_generator()
+generate_comp_state_template_method()
