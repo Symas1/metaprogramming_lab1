@@ -26,7 +26,7 @@ def create_base_element():
     wrap(base_element._add_method, commands)
     print_class_must_have_func(class_name, curr_func, curr_params, True)
     base_element._add_args_to_method(curr_func)
-    print_class_must_have_decors(class_name, curr_func, curr_decors, True)
+    print_class_must_have_decors(class_name, curr_func, curr_decors,True)
     base_element._add_method_decorator(curr_func)
 
     base_element._add_methods()
